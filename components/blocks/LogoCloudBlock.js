@@ -11,7 +11,53 @@ import {
   Upload
 } from "lucide-react";
 import useEditorStore from '@/lib/store/editorStore';
-import Image from 'next/image';
+
+// Logo Design Component
+function LogoDesign({ logo, grayscale }) {
+  const { shortName, fullName, color, type, style } = logo;
+  
+  const baseClasses = `transition-all duration-300 ${grayscale ? 'grayscale' : ''}`;
+  
+  if (type === 'text') {
+    const textStyles = {
+      modern: 'font-light tracking-wider text-lg md:text-xl',
+      bold: 'font-black text-base md:text-lg uppercase tracking-tight',
+      tech: 'font-mono text-sm md:text-base tracking-widest'
+    };
+    
+    return (
+      <div className={`${baseClasses} text-center`} style={{ color }}>
+        <div className={textStyles[style]}>
+          {fullName}
+        </div>
+      </div>
+    );
+  }
+  
+  if (type === 'icon-text') {
+    const containerStyles = {
+      circle: 'rounded-full',
+      square: 'rounded-md',
+      minimal: 'rounded-none'
+    };
+    
+    return (
+      <div className={`${baseClasses} flex items-center gap-2`}>
+        <div 
+          className={`w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-white font-bold text-xs md:text-sm ${containerStyles[style]}`}
+          style={{ backgroundColor: color }}
+        >
+          {shortName}
+        </div>
+        <span className="font-semibold text-sm md:text-base text-gray-700">
+          {fullName.split(/[\s&]+/)[0]}
+        </span>
+      </div>
+    );
+  }
+  
+  return null;
+}
 
 export default function LogoCloudBlock({ content, settings, isEditing, blockId }) {
   const [isEditingText, setIsEditingText] = useState(null);
@@ -30,10 +76,14 @@ export default function LogoCloudBlock({ content, settings, isEditing, blockId }
   };
 
   const addLogo = () => {
+    const colors = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899'];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
     const newLogo = {
       id: Date.now().toString(),
       name: 'New Company',
-      image: '/mock/logos/placeholder.svg'
+      image: null,
+      color: randomColor,
+      type: 'text'
     };
     handleContentChange('logos', [...logos, newLogo]);
   };
@@ -59,11 +109,12 @@ export default function LogoCloudBlock({ content, settings, isEditing, blockId }
   const {
     heading = 'Trusted by Industry Leaders',
     logos = [
-      { id: '1', name: 'TechCorp', image: '/mock/logos/techcorp.svg' },
-      { id: '2', name: 'InnovateLab', image: '/mock/logos/innovatelab.svg' },
-      { id: '3', name: 'FutureWorks', image: '/mock/logos/futureworks.svg' },
-      { id: '4', name: 'CloudVenture', image: '/mock/logos/cloudventure.svg' },
-      { id: '5', name: 'DataFlow', image: '/mock/logos/dataflow.svg' }
+      { id: '1', name: 'TechCorp', image: null, color: '#3B82F6', type: 'text' },
+      { id: '2', name: 'InnovateLab', image: null, color: '#10B981', type: 'text' },
+      { id: '3', name: 'FutureWorks', image: null, color: '#8B5CF6', type: 'text' },
+      { id: '4', name: 'CloudVenture', image: null, color: '#F59E0B', type: 'text' },
+      { id: '5', name: 'DataFlow', image: null, color: '#EF4444', type: 'text' },
+      { id: '6', name: 'NexusAI', image: null, color: '#06B6D4', type: 'text' }
     ]
   } = content;
 
@@ -83,6 +134,29 @@ export default function LogoCloudBlock({ content, settings, isEditing, blockId }
     static: '',
     scroll: 'animate-scroll',
     float: 'animate-float'
+  };
+
+  // Generate realistic logo designs
+  const generateLogoDesign = (logo) => {
+    const designs = [
+      // Text-based logos with different styles
+      { type: 'text', style: 'modern' },
+      { type: 'text', style: 'bold' },
+      { type: 'text', style: 'tech' },
+      { type: 'icon-text', style: 'circle' },
+      { type: 'icon-text', style: 'square' },
+      { type: 'icon-text', style: 'minimal' }
+    ];
+    
+    const design = designs[parseInt(logo.id) % designs.length];
+    const shortName = logo.name.split(/[\s&]+/).map(word => word.charAt(0)).join('').slice(0, 2);
+    
+    return {
+      shortName,
+      fullName: logo.name,
+      color: logo.color || '#3B82F6',
+      ...design
+    };
   };
 
   return (
@@ -129,16 +203,11 @@ export default function LogoCloudBlock({ content, settings, isEditing, blockId }
               className={`relative group flex items-center justify-center p-4 ${animationClasses[animation]}`}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              {/* Logo Image */}
-              <div className="relative w-24 h-16 md:w-32 md:h-20">
-                <Image
-                  src={logo.image}
-                  alt={logo.name}
-                  fill
-                  className={`object-contain transition-all duration-300 ${
-                    grayscale ? 'grayscale opacity-60 hover:grayscale-0 hover:opacity-100' : ''
-                  }`}
-                />
+              {/* Logo Design */}
+              <div className={`relative w-24 h-16 md:w-32 md:h-20 flex items-center justify-center transition-all duration-300 ${
+                grayscale ? 'opacity-60 hover:opacity-100' : ''
+              }`}>
+                <LogoDesign logo={generateLogoDesign(logo)} grayscale={grayscale} />
               </div>
 
               {/* Edit Controls */}
