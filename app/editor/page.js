@@ -5,7 +5,7 @@ import useEditorStore from '@/lib/store/editorStore';
 import { useAutoSave, AutoSaveIndicator } from '@/lib/hooks/useAutoSave';
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { 
@@ -107,15 +107,21 @@ export default function EditorPage() {
       {/* Toolbar */}
       <header className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
             {/* Mobile menu trigger */}
             <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
               <SheetTrigger asChild className="lg:hidden">
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="flex-shrink-0">
                   <Menu className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-80">
+                <SheetHeader>
+                  <SheetTitle>Block Library</SheetTitle>
+                  <SheetDescription>
+                    Choose blocks to add to your page
+                  </SheetDescription>
+                </SheetHeader>
                 <Suspense fallback={
                   <div className="flex items-center justify-center p-8">
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -127,11 +133,11 @@ export default function EditorPage() {
               </SheetContent>
             </Sheet>
 
-            <h1 className="text-lg font-semibold text-gray-900">
+            <h1 className="text-sm md:text-lg font-semibold text-gray-900 truncate">
               {page.title}
             </h1>
             
-            <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-3">
               {hasUnsavedChanges && !autoSave.isSaving && (
                 <span className="text-xs text-amber-600 font-medium">
                   Unsaved changes
@@ -147,8 +153,8 @@ export default function EditorPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* View mode toggles */}
+          <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+            {/* View mode toggles - Hidden on mobile */}
             <div className="hidden md:flex items-center border border-gray-200 rounded-md overflow-hidden">
               <Button
                 variant={viewMode === 'desktop' ? 'default' : 'ghost'}
@@ -168,16 +174,27 @@ export default function EditorPage() {
               </Button>
             </div>
 
-            <Separator orientation="vertical" className="h-6" />
+            <Separator orientation="vertical" className="h-6 hidden md:block" />
 
-            {/* Action buttons */}
+            {/* Essential buttons - always visible */}
             <Button
               variant={isPreviewMode ? 'default' : 'outline'}
               size="sm"
               onClick={handlePreview}
+              className="hidden sm:flex"
             >
               <Eye className="h-4 w-4 mr-2" />
               Preview
+            </Button>
+
+            {/* Mobile-only preview button */}
+            <Button
+              variant={isPreviewMode ? 'default' : 'ghost'}
+              size="icon"
+              onClick={handlePreview}
+              className="sm:hidden"
+            >
+              <Eye className="h-4 w-4" />
             </Button>
 
             <Button
@@ -185,15 +202,29 @@ export default function EditorPage() {
               size="sm"
               onClick={handleSave}
               disabled={!hasUnsavedChanges}
+              className="hidden sm:flex"
             >
               <Save className="h-4 w-4 mr-2" />
               Save
             </Button>
 
+            {/* Mobile-only save button */}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleSave}
+              disabled={!hasUnsavedChanges}
+              className="sm:hidden"
+            >
+              <Save className="h-4 w-4" />
+            </Button>
+
+            {/* Secondary buttons - hidden on mobile */}
             <Button
               variant="outline"
               size="sm"
               onClick={() => setTemplatesOpen(true)}
+              className="hidden lg:flex"
             >
               <Layout className="h-4 w-4 mr-2" />
               Templates
@@ -203,18 +234,20 @@ export default function EditorPage() {
               variant="outline"
               size="sm"
               onClick={handleExport}
+              className="hidden lg:flex"
             >
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
 
-            {/* Test runner (development only) */}
+            {/* Test runner (development only) - hidden on mobile */}
             {process.env.NODE_ENV === 'development' && (
               <Button 
                 variant="ghost" 
                 size="icon"
                 onClick={() => setTestRunnerOpen(true)}
                 title="Run Tests"
+                className="hidden md:flex"
               >
                 <Bug className="h-4 w-4" />
               </Button>
@@ -228,6 +261,12 @@ export default function EditorPage() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-80">
+                <SheetHeader>
+                  <SheetTitle>Settings</SheetTitle>
+                  <SheetDescription>
+                    Customize your page and block settings
+                  </SheetDescription>
+                </SheetHeader>
                 <Suspense fallback={
                   <div className="flex items-center justify-center p-8">
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -245,7 +284,7 @@ export default function EditorPage() {
       {/* Main editor area */}
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar - Hidden on mobile, shown in sheet */}
-        <aside className="hidden lg:block w-80 bg-white border-r border-gray-200">
+        <aside className="hidden lg:block w-80 bg-white border-r border-gray-200 h-full">
           <Suspense fallback={
             <div className="flex items-center justify-center p-8">
               <Loader2 className="h-5 w-5 animate-spin" />

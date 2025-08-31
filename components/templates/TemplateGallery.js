@@ -6,13 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Search, 
   Eye, 
   Download, 
-  Star,
   Zap,
   Palette,
   Briefcase,
@@ -39,7 +38,6 @@ export default function TemplateGallery({ isOpen, onClose }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [previewTemplate, setPreviewTemplate] = useState(null);
   
-  const { resetPage } = useEditorStore();
 
   // Filter templates based on search and category
   const filteredTemplates = useMemo(() => {
@@ -93,7 +91,7 @@ export default function TemplateGallery({ isOpen, onClose }) {
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-6xl max-h-[90vh] p-0">
+        <DialogContent className="max-w-6xl sm:max-w-[95vw] lg:max-w-6xl max-h-[90vh] p-0">
           <div className="flex flex-col h-full">
             <DialogHeader className="p-6 pb-4">
               <DialogTitle className="flex items-center gap-2">
@@ -124,19 +122,21 @@ export default function TemplateGallery({ isOpen, onClose }) {
               <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="h-full flex flex-col">
                 {/* Category tabs */}
                 <div className="px-6">
-                  <TabsList className="grid w-full grid-cols-6">
+                  <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-6">
                     {categories.map(category => (
                       <TabsTrigger
                         key={category.id}
                         value={category.id}
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-1 text-xs sm:text-sm"
                       >
                         {category.id !== 'all' && CategoryIcons[category.id] && (() => {
                           const IconComponent = CategoryIcons[category.id];
-                          return <IconComponent className="h-4 w-4" />;
+                          return <IconComponent className="h-3 w-3 sm:h-4 sm:w-4" />;
                         })()}
-                        <span className="hidden sm:inline">{category.name}</span>
-                        <Badge variant="secondary" className="text-xs">
+                        <span className="inline sm:inline truncate">
+                          {category.id === 'all' ? 'All' : category.name}
+                        </span>
+                        <Badge variant="secondary" className="text-xs ml-1">
                           {category.count}
                         </Badge>
                       </TabsTrigger>
@@ -196,13 +196,45 @@ export default function TemplateGallery({ isOpen, onClose }) {
 }
 
 function TemplateCard({ template, onApply, onPreview }) {
+  // Generate mock preview image based on template category and id
+  const getMockImage = (template) => {
+    const colors = {
+      business: 'from-blue-400 to-blue-600',
+      ecommerce: 'from-green-400 to-green-600',
+      portfolio: 'from-purple-400 to-purple-600',
+      landing: 'from-orange-400 to-orange-600',
+      blog: 'from-indigo-400 to-indigo-600',
+      restaurant: 'from-red-400 to-red-600'
+    };
+    
+    const patterns = [
+      'bg-gradient-to-br',
+      'bg-gradient-to-tr',
+      'bg-gradient-to-bl',
+      'bg-gradient-to-tl'
+    ];
+    
+    const gradient = colors[template.category] || 'from-gray-400 to-gray-600';
+    const pattern = patterns[template.id.length % patterns.length];
+    
+    return `${pattern} ${gradient}`;
+  };
+
   return (
     <Card className="group cursor-pointer transition-all hover:shadow-lg border-2 hover:border-blue-200">
       <div className="relative">
-        <div className="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-lg flex items-center justify-center">
-          {/* Template thumbnail placeholder */}
-          <div className="text-gray-400">
-            <Palette className="h-12 w-12" />
+        <div className={`aspect-[4/3] ${getMockImage(template)} rounded-t-lg flex items-center justify-center relative overflow-hidden`}>
+          {/* Mock website layout overlay */}
+          <div className="absolute inset-4 bg-white/90 rounded-sm shadow-sm">
+            <div className="p-2 space-y-1">
+              <div className="h-1 bg-gray-300 rounded w-full"></div>
+              <div className="h-1 bg-gray-300 rounded w-3/4"></div>
+              <div className="h-4 bg-gray-200 rounded mt-2"></div>
+              <div className="space-y-1 mt-2">
+                <div className="h-1 bg-gray-200 rounded w-full"></div>
+                <div className="h-1 bg-gray-200 rounded w-2/3"></div>
+              </div>
+            </div>
           </div>
           
           {/* Overlay buttons */}
@@ -267,9 +299,52 @@ function TemplatePreviewModal({ template, isOpen, onClose, onApply }) {
 
         <div className="space-y-4">
           {/* Template preview */}
-          <div className="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
-            <div className="text-gray-400">
-              <Palette className="h-16 w-16" />
+          <div className={`aspect-[4/3] ${(() => {
+            const colors = {
+              business: 'from-blue-400 to-blue-600',
+              ecommerce: 'from-green-400 to-green-600', 
+              portfolio: 'from-purple-400 to-purple-600',
+              landing: 'from-orange-400 to-orange-600',
+              blog: 'from-indigo-400 to-indigo-600',
+              restaurant: 'from-red-400 to-red-600'
+            };
+            const gradient = colors[template.category] || 'from-gray-400 to-gray-600';
+            return `bg-gradient-to-br ${gradient}`;
+          })()} rounded-lg flex items-center justify-center relative overflow-hidden`}>
+            {/* Larger mock website layout */}
+            <div className="absolute inset-8 bg-white/95 rounded shadow-lg">
+              <div className="p-4 space-y-2">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                  <div className="h-2 bg-gray-300 rounded w-20"></div>
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-gray-200 rounded"></div>
+                    <div className="w-2 h-2 bg-gray-200 rounded"></div>
+                    <div className="w-2 h-2 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+                {/* Hero section */}
+                <div className="bg-gray-50 rounded p-3 space-y-2">
+                  <div className="h-2 bg-gray-300 rounded w-3/4 mx-auto"></div>
+                  <div className="h-1 bg-gray-200 rounded w-1/2 mx-auto"></div>
+                  <div className="h-4 bg-blue-100 rounded w-16 mx-auto mt-2"></div>
+                </div>
+                {/* Content sections */}
+                <div className="grid grid-cols-3 gap-2 mt-3">
+                  <div className="space-y-1">
+                    <div className="h-3 bg-gray-100 rounded"></div>
+                    <div className="h-1 bg-gray-100 rounded w-3/4"></div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="h-3 bg-gray-100 rounded"></div>
+                    <div className="h-1 bg-gray-100 rounded w-3/4"></div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="h-3 bg-gray-100 rounded"></div>
+                    <div className="h-1 bg-gray-100 rounded w-3/4"></div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

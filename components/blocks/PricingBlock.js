@@ -359,10 +359,10 @@ export default function PricingBlock({ content, settings, isEditing, blockId }) 
         </div>
 
         {/* Pricing Cards */}
-        <div className={`grid gap-8 ${
-          planCount === 2 ? 'md:grid-cols-2 max-w-4xl mx-auto' :
-          planCount === 3 ? 'md:grid-cols-3 max-w-6xl mx-auto' :
-          'md:grid-cols-4 max-w-7xl mx-auto'
+        <div className={`grid gap-6 grid-cols-1 ${
+          planCount === 2 ? 'sm:grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto' :
+          planCount === 3 ? 'sm:grid-cols-1 lg:grid-cols-3 max-w-6xl mx-auto' :
+          'sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 max-w-7xl mx-auto'
         }`}>
           {plans.map(renderPricingCard)}
         </div>

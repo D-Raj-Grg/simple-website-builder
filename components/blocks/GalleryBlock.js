@@ -104,7 +104,7 @@ export default function GalleryBlock({ content, settings, isEditing, blockId }) 
 
   const renderImage = (image, index) => (
     <Card 
-      key={image.id}
+      key={image.id+index}
       className={`group overflow-hidden ${
         layout === 'masonry' ? 'break-inside-avoid mb-4' : ''
       } hover:shadow-lg transition-all duration-300 cursor-pointer`}

@@ -278,13 +278,6 @@ export default function ColorPicker({
         </PopoverContent>
       </Popover>
 
-      {/* Error Display */}
-      {error && (
-        <p className="text-sm text-red-600 flex items-center gap-1">
-          <AlertCircle className="h-3 w-3" />
-          {error}
-        </p>
-      )}
     </div>
   );
 }

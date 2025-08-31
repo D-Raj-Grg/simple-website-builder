@@ -115,7 +115,7 @@ export default function BlockLibrary({ onBlockSelect }) {
       </div>
 
       {/* Block list */}
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 h-full">
         <div className="p-4 space-y-3">
           {filteredBlocks.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
