@@ -213,12 +213,16 @@ export default function Canvas({ viewMode }) {
             {page.blocks.length === 0 ? (
               // Empty state
               <div className="h-screen flex flex-col items-center justify-center p-8 text-center">
-                <div className={`max-w-md ${isDragOver ? 'animate-pulse' : ''}`}>
-                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className={`max-w-md transition-all duration-300 ${isDragOver ? 'animate-pulse scale-105' : 'scale-100'}`}>
+                  <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 transition-all duration-300 ${
+                    isDragOver 
+                      ? 'bg-blue-100 border-2 border-blue-300 border-dashed' 
+                      : 'bg-gray-100 hover:bg-gray-200'
+                  }`}>
                     {isDragOver ? (
-                      <Plus className="h-8 w-8 text-blue-600" />
+                      <Plus className="h-8 w-8 text-blue-600 animate-bounce" />
                     ) : (
-                      <MousePointer2 className="h-8 w-8 text-gray-400" />
+                      <MousePointer2 className="h-8 w-8 text-gray-400 transition-colors" />
                     )}
                   </div>
                   

@@ -149,12 +149,12 @@ export default function EditorPage() {
 
           <div className="flex items-center gap-2">
             {/* View mode toggles */}
-            <div className="hidden md:flex items-center border border-gray-200 rounded-md">
+            <div className="hidden md:flex items-center border border-gray-200 rounded-md overflow-hidden">
               <Button
                 variant={viewMode === 'desktop' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('desktop')}
-                className="rounded-r-none border-r"
+                className="rounded-r-none border-r transition-all duration-200 hover:scale-105"
               >
                 <Monitor className="h-4 w-4" />
               </Button>
