@@ -51,7 +51,7 @@ const HeroBlock = memo(function HeroBlock({ content, settings, isEditing, blockI
     heading = 'Transform Your Business Today',
     subheading = 'Build beautiful, professional websites in minutes with our intuitive drag-and-drop builder.',
     ctaButton = { text: 'Get Started', link: '#' },
-    image = 'https://picsum.photos/1200/600?random=1'
+    image = 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=600&fit=crop&auto=format'
   } = content;
 
   // Dynamic classes based on settings

@@ -47,39 +47,18 @@ export default function EditorPage() {
     loadPage
   } = useEditorStore();
 
-  // Auto-save functionality
-  const autoSave = useAutoSave(
-    page,
-    async (pageData) => {
-      return await saveChanges();
-    },
-    {
-      delay: 30000, // 30 seconds
-      enabled: hasUnsavedChanges, // Only auto-save if there are changes
-      showToast: true
-    }
-  );
+  // Auto-save functionality - temporarily disabled to prevent loops
+  const autoSave = {
+    isSaving: false,
+    lastSaved: null,
+    saveError: null
+  };
 
   // Load saved page on mount
   useEffect(() => {
     loadPage();
   }, [loadPage]);
 
-  // Auto-save functionality
-  useEffect(() => {
-    if (!hasUnsavedChanges) return;
-    
-    const autoSaveInterval = setInterval(async () => {
-      if (hasUnsavedChanges) {
-        const result = await saveChanges();
-        if (result.success) {
-          toast.success('Auto-saved', { duration: 1000 });
-        }
-      }
-    }, 30000); // Auto-save every 30 seconds
-
-    return () => clearInterval(autoSaveInterval);
-  }, [hasUnsavedChanges, saveChanges]);
 
   const handleSave = async () => {
     const result = await saveChanges();

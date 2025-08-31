@@ -118,10 +118,22 @@ export default function LogoCloudBlock({ content, settings, isEditing, blockId }
     ]
   } = content;
 
-  const gridClasses = {
-    4: 'grid-cols-2 md:grid-cols-4',
-    5: 'grid-cols-3 md:grid-cols-5',
-    6: 'grid-cols-3 md:grid-cols-6'
+  // Dynamic grid based on logo count and perRow setting
+  const getGridClasses = () => {
+    const logoCount = logos.length;
+    const actualPerRow = Math.min(perRow, logoCount);
+    
+    if (actualPerRow <= 2) {
+      return 'grid-cols-1 sm:grid-cols-2';
+    } else if (actualPerRow <= 3) {
+      return 'grid-cols-2 sm:grid-cols-3';
+    } else if (actualPerRow <= 4) {
+      return 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4';
+    } else if (actualPerRow <= 5) {
+      return 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5';
+    } else {
+      return 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6';
+    }
   };
 
   const spacingClasses = {
@@ -196,7 +208,7 @@ export default function LogoCloudBlock({ content, settings, isEditing, blockId }
         )}
 
         {/* Logos Grid */}
-        <div className={`grid ${gridClasses[perRow]} ${spacingClasses[spacing]} items-center justify-items-center`}>
+        <div className={`grid ${getGridClasses()} ${spacingClasses[spacing]} items-center justify-items-center`}>
           {logos.map((logo, index) => (
             <div 
               key={logo.id}
