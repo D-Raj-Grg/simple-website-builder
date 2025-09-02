@@ -5,40 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { 
-  Upload, 
-  Play, 
-  ArrowRight, 
-  Download, 
-  Mail, 
-  Phone, 
-  ShoppingCart,
-  Zap
-} from "lucide-react";
+import { Upload, Play } from "lucide-react";
 import useEditorStore from '@/lib/store/editorStore';
 import Image from 'next/image';
 
-// Icon mapping for buttons
-const iconMap = {
-  'play': Play,
-  'arrow-right': ArrowRight,
-  'download': Download,
-  'mail': Mail,
-  'phone': Phone,
-  'cart': ShoppingCart,
-  'zap': Zap,
-  'none': null
-};
-
 /**
- * Enhanced Hero block component with granular control support
- * Supports individual styling for heading, subheading, button, and image
+ * Hero block component for displaying main page header with CTA
+ * Supports inline text editing, image positioning, and responsive design
  * @param {Object} props - Component properties
  * @param {Object} props.content - Block content data (multilingual)
- * @param {Object} props.settings - Enhanced block settings with granular controls
+ * @param {Object} props.settings - Block settings (imagePosition, textSize, alignment, bgColor)
  * @param {boolean} props.isEditing - Whether block is in edit mode
  * @param {string} props.blockId - Unique identifier for the block
- * @returns {JSX.Element} Enhanced Hero block component
+ * @returns {JSX.Element} Hero block component
  */
 const HeroBlock = memo(function HeroBlock({ content, settings, isEditing, blockId }) {
   const [isEditingText, setIsEditingText] = useState(null);
@@ -49,7 +28,7 @@ const HeroBlock = memo(function HeroBlock({ content, settings, isEditing, blockI
       content: {
         ...content,
         [currentLanguage]: {
-          ...content[currentLanguage],
+          ...content,
           [key]: value
         }
       }
@@ -61,155 +40,46 @@ const HeroBlock = memo(function HeroBlock({ content, settings, isEditing, blockI
     setIsEditingText(null);
   };
 
-  // Extract enhanced settings with defaults
   const {
-    // Layout settings
     imagePosition = 'center',
+    textSize = 'L',
     alignment = 'center',
-    bgColor = 'white',
-    spacing = 'comfortable',
-    
-    // Heading settings
-    headingSize = 'L',
-    headingWeight = 'bold',
-    headingColor = '#1F2937',
-    headingAlignment = 'center',
-    
-    // Subheading settings
-    subheadingSize = 'M',
-    subheadingWeight = 'normal',
-    subheadingColor = '#6B7280',
-    subheadingAlignment = 'center',
-    
-    // Button settings
-    buttonStyle = {
-      size: 'lg',
-      variant: 'primary',
-      icon: 'play',
-      iconPosition: 'left',
-      corner: 'rounded'
-    },
-    buttonAlignment = 'center',
-    
-    // Image settings
-    imageRadius = 'rounded',
-    imageOverlay = false,
-    imageOpacity = 100
+    bgColor = 'white'
   } = settings;
 
-  // Extract content with defaults
-  const localContent = content[currentLanguage] || content['en'] || {};
   const {
     heading = 'Transform Your Business Today',
     subheading = 'Build beautiful, professional websites in minutes with our intuitive drag-and-drop builder.',
     ctaButton = { text: 'Get Started', link: '#' },
     image = 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=600&fit=crop&auto=format'
-  } = localContent;
+  } = content;
 
-  // Helper functions for CSS classes
-  const getFontSizeClass = (size) => {
-    const sizes = {
-      'XS': 'text-sm',
-      'S': 'text-base md:text-lg',
-      'M': 'text-lg md:text-xl',
-      'L': 'text-2xl md:text-4xl',
-      'XL': 'text-3xl md:text-5xl',
-      'XXL': 'text-4xl md:text-6xl',
-      'XXXL': 'text-5xl md:text-7xl'
-    };
-    return sizes[size] || sizes.M;
+  // Dynamic classes based on settings
+  const textSizeClasses = {
+    S: 'text-3xl md:text-4xl',
+    M: 'text-4xl md:text-5xl',
+    L: 'text-5xl md:text-6xl',
+    XL: 'text-6xl md:text-7xl'
   };
 
-  const getFontWeightClass = (weight) => {
-    const weights = {
-      'light': 'font-light',
-      'normal': 'font-normal',
-      'medium': 'font-medium',
-      'semibold': 'font-semibold',
-      'bold': 'font-bold',
-      'extrabold': 'font-extrabold',
-      'black': 'font-black'
-    };
-    return weights[weight] || weights.normal;
+  const alignmentClasses = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right'
   };
 
-  const getTextAlignmentClass = (align) => {
-    const alignments = {
-      'left': 'text-left',
-      'center': 'text-center',
-      'right': 'text-right',
-      'justify': 'text-justify'
-    };
-    return alignments[align] || alignments.center;
+  const imagePositionLayout = {
+    left: 'md:flex-row',
+    center: 'flex-col',
+    right: 'md:flex-row-reverse'
   };
-
-  const getButtonAlignmentClass = (align) => {
-    const alignments = {
-      'left': 'justify-start',
-      'center': 'justify-center',
-      'right': 'justify-end'
-    };
-    return alignments[align] || alignments.center;
-  };
-
-  const getButtonSizeClass = (size) => {
-    const sizes = {
-      'sm': 'px-3 py-1.5 text-sm',
-      'md': 'px-4 py-2 text-base',
-      'lg': 'px-6 py-3 text-lg',
-      'xl': 'px-8 py-4 text-xl'
-    };
-    return sizes[size] || sizes.lg;
-  };
-
-  const getButtonVariantClass = (variant) => {
-    const variants = {
-      'primary': 'bg-blue-600 text-white hover:bg-blue-700 border-blue-600',
-      'secondary': 'bg-gray-600 text-white hover:bg-gray-700 border-gray-600',
-      'outline': 'border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white bg-transparent',
-      'ghost': 'text-blue-600 hover:bg-blue-50 bg-transparent border-transparent',
-      'destructive': 'bg-red-600 text-white hover:bg-red-700 border-red-600'
-    };
-    return variants[variant] || variants.primary;
-  };
-
-  const getSpacingClass = (spacingType) => {
-    const spacings = {
-      'compact': 'py-12',
-      'comfortable': 'py-16',
-      'spacious': 'py-20'
-    };
-    return spacings[spacingType] || spacings.comfortable;
-  };
-
-  const getImagePositionLayout = () => {
-    const layouts = {
-      'left': 'md:flex-row',
-      'center': 'flex-col',
-      'right': 'md:flex-row-reverse'
-    };
-    return layouts[imagePosition] || layouts.center;
-  };
-
-  const getBackgroundStyle = () => {
-    if (bgColor?.includes('gradient')) {
-      return { background: bgColor };
-    }
-    return { backgroundColor: bgColor };
-  };
-
-  // Get button icon
-  const ButtonIcon = iconMap[buttonStyle.icon] || null;
 
   return (
-    <section 
-      className={`px-6 md:px-8 ${getSpacingClass(spacing)}`}
-      style={getBackgroundStyle()}
-    >
+    <section className={`py-16 px-6 md:px-8 ${bgColor === 'gray' ? 'bg-gray-50' : 'bg-white'}`}>
       <div className="max-w-7xl mx-auto">
-        <div className={`flex flex-col gap-12 items-center ${getImagePositionLayout()}`}>
+        <div className={`flex flex-col gap-12 items-center ${imagePositionLayout[imagePosition]}`}>
           {/* Text Content */}
-          <div className={`flex-1 space-y-6 ${getTextAlignmentClass(alignment)}`}>
+          <div className={`flex-1 space-y-6 ${alignmentClasses[alignment]}`}>
             {/* Heading */}
             <div>
               {isEditing && isEditingText === 'heading' ? (
@@ -227,16 +97,9 @@ const HeroBlock = memo(function HeroBlock({ content, settings, isEditing, blockI
                 />
               ) : (
                 <h1 
-                  className={`leading-tight transition-colors ${
-                    getFontSizeClass(headingSize)
-                  } ${
-                    getFontWeightClass(headingWeight)
-                  } ${
-                    getTextAlignmentClass(headingAlignment)
-                  } ${
+                  className={`font-bold text-gray-900 leading-tight ${textSizeClasses[textSize]} ${
                     isEditing ? 'cursor-pointer hover:bg-blue-50 p-2 rounded transition-colors' : ''
                   }`}
-                  style={{ color: headingColor }}
                   onClick={() => isEditing && setIsEditingText('heading')}
                 >
                   {heading}
@@ -256,24 +119,17 @@ const HeroBlock = memo(function HeroBlock({ content, settings, isEditing, blockI
                       handleInlineEdit('subheading', e.target.value);
                     }
                   }}
-                  className="border-2 border-blue-500 bg-white resize-none"
+                  className="text-xl border-2 border-blue-500 bg-white resize-none"
                   rows={3}
                   autoFocus
                 />
               ) : (
                 <p 
-                  className={`leading-relaxed max-w-2xl transition-colors ${
-                    getFontSizeClass(subheadingSize)
-                  } ${
-                    getFontWeightClass(subheadingWeight)
-                  } ${
-                    getTextAlignmentClass(subheadingAlignment)
-                  } ${
-                    subheadingAlignment === 'center' ? 'mx-auto' : ''
+                  className={`text-xl text-gray-600 leading-relaxed max-w-2xl ${
+                    alignment === 'center' ? 'mx-auto' : ''
                   } ${
                     isEditing ? 'cursor-pointer hover:bg-blue-50 p-2 rounded transition-colors' : ''
                   }`}
-                  style={{ color: subheadingColor }}
                   onClick={() => isEditing && setIsEditingText('subheading')}
                 >
                   {subheading}
@@ -282,7 +138,7 @@ const HeroBlock = memo(function HeroBlock({ content, settings, isEditing, blockI
             </div>
 
             {/* CTA Button */}
-            <div className={`pt-4 flex ${getButtonAlignmentClass(buttonAlignment)}`}>
+            <div className="pt-4">
               {isEditing && isEditingText === 'ctaButton' ? (
                 <div className="flex gap-2 max-w-md">
                   <Input
@@ -308,23 +164,16 @@ const HeroBlock = memo(function HeroBlock({ content, settings, isEditing, blockI
                   />
                 </div>
               ) : (
-                <button
-                  className={`inline-flex items-center gap-2 font-semibold transition-all border ${
-                    getButtonSizeClass(buttonStyle.size)
-                  } ${
-                    getButtonVariantClass(buttonStyle.variant)
-                  } ${
-                    buttonStyle.corner === 'rounded-none' ? 'rounded-none' :
-                    buttonStyle.corner === 'rounded-full' ? 'rounded-full' : 'rounded'
-                  } ${
-                    isEditing ? 'cursor-pointer ring-2 ring-offset-2 ring-blue-500 ring-opacity-0 hover:ring-opacity-100' : ''
+                <Button 
+                  size="lg" 
+                  className={`px-8 py-4 text-lg font-semibold ${
+                    isEditing ? 'cursor-pointer ring-2 ring-offset-2 ring-blue-500 ring-opacity-0 hover:ring-opacity-100 transition-all' : ''
                   }`}
                   onClick={() => isEditing ? setIsEditingText('ctaButton') : undefined}
                 >
-                  {ButtonIcon && buttonStyle.iconPosition === 'left' && <ButtonIcon className="h-4 w-4" />}
+                  <Play className="mr-2 h-5 w-5" />
                   {ctaButton.text}
-                  {ButtonIcon && buttonStyle.iconPosition === 'right' && <ButtonIcon className="h-4 w-4" />}
-                </button>
+                </Button>
               )}
             </div>
           </div>
@@ -334,21 +183,14 @@ const HeroBlock = memo(function HeroBlock({ content, settings, isEditing, blockI
             <div className="flex-1 max-w-2xl">
               <div className="relative">
                 {image ? (
-                  <div className={`relative w-full h-96 overflow-hidden ${
-                    imageRadius === 'rounded-none' ? '' :
-                    imageRadius === 'rounded-full' ? 'rounded-full' : 'rounded-lg'
-                  }`}>
+                  <div className="relative w-full h-96 rounded-lg overflow-hidden">
                     <Image
                       src={image}
                       alt="Hero image"
                       fill
                       className="object-cover"
-                      style={{ opacity: imageOpacity / 100 }}
                       priority
                     />
-                    {imageOverlay && (
-                      <div className="absolute inset-0 bg-black bg-opacity-20" />
-                    )}
                     {isEditing && (
                       <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                         <Button variant="secondary" size="sm">
@@ -383,13 +225,9 @@ const HeroBlock = memo(function HeroBlock({ content, settings, isEditing, blockI
                 src={image}
                 alt="Hero background"
                 fill
-                className="object-cover rounded-lg"
-                style={{ opacity: (imageOpacity / 100) * 0.1 }}
+                className="object-cover rounded-lg opacity-10"
                 priority
               />
-              {imageOverlay && (
-                <div className="absolute inset-0 bg-black bg-opacity-10" />
-              )}
             </div>
           </div>
         )}

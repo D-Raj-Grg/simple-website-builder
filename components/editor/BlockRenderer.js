@@ -149,7 +149,7 @@ const BlockRenderer = memo(function BlockRenderer({
           }
         >
           <BlockComponent
-            content={block.content[currentLanguage] || block.content['en'] || {}}
+            content={block.content}
             settings={block.settings}
             isEditing={!isPreviewMode}
             blockId={block.id}
